@@ -1,9 +1,12 @@
 import random
 
 from django.shortcuts import render
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+
+from . import swagger_params
 from .models import Quiz
 from .serializers import QuizSerializer
 
@@ -15,6 +18,9 @@ from rest_framework.pagination import LimitOffsetPagination
 class QuizRandomView(APIView):
     model = Quiz
 
+    @swagger_auto_schema(
+        tags=["Quiz"]
+    )
     def get(self, request, cnt):
         total_quiz = Quiz.objects.all()
         random_quiz = random.sample(list(total_quiz), cnt)
@@ -65,6 +71,9 @@ class QuizListView(APIView, LimitOffsetPagination):
         context['quiz'] = quiz
         return context
 
+    @swagger_auto_schema(
+        tags=["Quiz"], manual_parameters=swagger_params.account_post_params
+    )
     def get(self,request, *args, **kwargs):
         # if self.request.profile.role != "ADMIN" and not self.request.profile.is_admin:
         #     return Response(
